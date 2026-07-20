@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - main
+      - main-reach
       - develop
   pull_request:
 permissions:
