@@ -27,7 +27,7 @@ variable "container_app_id" {
 
 variable "security_team_email" {
   type    = string
-  default = "security-oncall@cloudeorbit.example"
+  default = "security-oncall@RiyaMhatre9525.example"
 }
 
 data "azurerm_resource_group" "rg" {
@@ -39,7 +39,7 @@ data "azurerm_resource_group" "rg" {
 # ---------------------------------------------------------
 
 resource "azurerm_log_analytics_workspace" "law" {
-  name                = "cloudeorbit-law"
+  name                = "RiyaMhatre9525-law"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
   sku                 = "PerGB2018"
@@ -48,7 +48,7 @@ resource "azurerm_log_analytics_workspace" "law" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                       = "cloudeorbit-kv"
+  name                       = "RiyaMhatre9525-kv"
   location                   = data.azurerm_resource_group.rg.location
   resource_group_name        = data.azurerm_resource_group.rg.name
   tenant_id                  = data.azurerm_client_config.current.tenant_id
@@ -84,7 +84,7 @@ resource "azurerm_key_vault_key" "log_key" {
 }
 
 resource "azurerm_storage_account" "log_archive" {
-  name                     = "cloudeorbitlogsarchive"
+  name                     = "RiyaMhatre9525logsarchive"
   resource_group_name      = data.azurerm_resource_group.rg.name
   location                 = data.azurerm_resource_group.rg.location
   account_tier             = "Standard"

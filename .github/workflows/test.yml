@@ -3,7 +3,7 @@ name: Secure Build Pipeline
 on:
   push:
     branches:
-      - main-react
+      - main
       - main
       - develop
   pull_request:
