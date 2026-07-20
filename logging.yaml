@@ -1,0 +1,97 @@
+version: '1'
+metadata:
+  description: "Enterprise Logging & Security Auditing Configuration"
+  domain: "logging_domain"
+  level_maturity_target: 3
+# --- Level 1 & 2: Centralized System & Application Logging ---
+centralized_log_system:
+  target: "log analytics" # Can also be "splunk", "elk", "elasticsearch", "datadog", or "azure monitor"
+  sources:
+    - name: "frontend-web"
+      type: "application"
+      description: "Aggregates client-side and web server events, routing logs to the centralized log system"
+    - name: "auth-service"
+      type: "security"
+      description: "Collects authentication and authorization audit logs for identity tracking"
+    - name: "database"
+      type: "audit"
+      description: "Captures access control and schema modifications"
+# --- Level 1 & 2: Secure Storage & WORM Protections ---
+security_and_integrity:
+  encryption:
+    enabled: true
+    algorithm: "AES-256"
+  retention:
+    days: 90
+  integrity_protection:
+    write_once_read_many: true # Enforces WORM (Write-Once-Read-Many) policies
+    tamper_evident_logging: true # Detects log modification (e.g., hash chaining/signatures)
+    unauthorized_manipulation_protection: "ReadOnly log storage policy enforced. Modifications are prohibited."
+# --- Level 2: Log Correlation Context ---
+correlation_context:
+  enabled: true
+  headers:
+    - "correlation_id"
+    - "trace_id"
+    - "x-request-id"
+    - "traceparent" # W3C context propagation compatibility
+  log_format: "[%(asctime)s] [%(correlation_id)s] [%(levelname)s] %(message)s"
+# --- Level 2: Security Audit Events ---
+security_event_handlers:
+  authentication:
+    events:
+      - "login"
+      - "logout"
+      - "signin"
+      - "signout"
+
+  user_lifecycle:
+    events:
+      - "user_created"
+      - "user_deleted"
+      - "user_changed"
+      - "user.updated"
+      - "role_changed"
+
+# --- Level 3: Log Analysis, Visualization & Alerting ---
+
+analysis_and_visualization:
+  monitoring:
+    enabled: true
+    provider: "Azure Monitor"
+
+  alerting:
+    enabled: true
+    provider: "PagerDuty"
+
+  incident_response:
+    enabled: true
+
+ incident_analysis:
+    enabled: true
+    process: "SOC triage and root cause analysis"
+    root_cause_analysis: true
+    post_incident_review: true
+    playbooks:
+      - "Security Incident Playbook"
+      - "Brute Force Investigation"
+
+  gui_search:
+    enabled: true
+    platform: "Kibana/Grafana GUI Dashboard"
+    developer_access_policy: "Developers have read-only access to application log namespaces."
+
+  attack_detection_rules:
+    enabled: true
+    rules:
+      - name: "Brute Force Detection"
+        trigger: "5 failed login or signin attempts within 60 seconds"
+      - name: "SQL Injection Alert"
+        trigger: "Detect regex patterns matching SQL syntax in URL/inputs"
+
+  incident_awareness:
+    alert_delivery:
+      provider: "PagerDuty"
+      channels:
+        - "security-alerts-slack-hook"
+      severity_threshold: "error"  

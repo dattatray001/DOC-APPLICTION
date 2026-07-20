@@ -1,0 +1,160 @@
+version: "1"
+
+metadata:
+  description: "Enterprise Monitoring & Observability Configuration"
+  domain: "monitoring_domain"
+  level_maturity_target: 3
+
+monitoring:
+  enabled: true
+  provider: "Azure Monitor"
+
+metrics:
+  application:
+    enabled: true
+    collect:
+      - authentication_attempts
+      - transaction_volume
+      - request_latency
+      - error_rate
+
+  system:
+    enabled: true
+    collect:
+      - cpu_usage
+      - memory_usage
+      - disk_usage
+      - network_usage
+
+cost_monitoring:
+  enabled: true
+  provider: "Azure Cost Management"
+
+  budget:
+    amount: 70000
+    currency: "INR"
+    period: "Monthly"
+
+  alerts:
+    - threshold: 50
+      action: "Notify Owners"
+
+    - threshold: 80
+      action: "Notify Owners and Contributors"
+
+    - threshold: 100
+      action: "Critical Budget Alert"
+
+alerting:
+  enabled: true
+  provider: "Azure Monitor"
+
+  metric_alerts:
+    - name: "High CPU Usage"
+      metric: "CPU Percentage"
+      operator: "GreaterThan"
+      threshold: 80
+      severity: 2
+
+    - name: "High Memory Usage"
+      metric: "Memory Percentage"
+      operator: "GreaterThan"
+      threshold: 85
+      severity: 2
+
+    - name: "Disk Space Low"
+      metric: "Disk Usage"
+      operator: "GreaterThan"
+      threshold: 90
+      severity: 1
+
+  notification_channels:
+    - Email
+    - Microsoft Teams
+
+  action_group:
+    name: "Monitoring Team"
+    provider: "Azure Monitor"
+
+dashboards:
+  enabled: true
+  provider: "Grafana"
+
+  dashboards:
+    - name: "Application Health Dashboard"
+      metrics:
+        - cpu_usage
+        - memory_usage
+        - request_latency
+        - error_rate
+
+    - name: "Infrastructure Dashboard"
+      metrics:
+        - disk_usage
+        - network_usage
+
+diagnostic_settings:
+  enabled: true
+
+  destination:
+    - Log Analytics Workspace
+    - Azure Storage
+
+log_analytics:
+  enabled: true
+  retention_days: 90
+
+application_insights:
+  enabled: true
+  availability_tests: true
+# -----------------------------
+# Level 3 - Advanced Observability
+# -----------------------------
+
+availability_monitoring:
+  enabled: true
+
+  sla:
+    uptime_target: "99.95%"
+    downtime_alert_threshold: "5m"
+
+  health_checks:
+    - Homepage
+    - API
+    - Database
+
+system_event_auditing:
+  enabled: true
+
+  log_sources:
+    - Azure Activity Logs
+    - Azure Resource Logs
+    - Application Logs
+    - Kubernetes Audit Logs
+
+metric_management:
+  remove_unused_metrics: true
+  stale_metric_retention_days: 30
+
+metric_grouping:
+  enabled: true
+
+  groups:
+    - Infrastructure
+    - Application
+    - Security
+    - Cost
+    - Network
+
+role_based_alerting:
+  enabled: true
+
+  teams:
+    critical:
+      - Security Team
+
+    high:
+      - DevOps Team
+
+    medium:
+      - Operations Team
